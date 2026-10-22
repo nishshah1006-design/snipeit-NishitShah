@@ -1,0 +1,4 @@
+# Keep LF line endings on every OS, matching .editorconfig
+* text=auto eol=lf
+
+*.sln text eol=crlf

@@ -1,0 +1,11 @@
+bin/
+obj/
+TestResults/
+playwright-traces/
+*.user
+.vs/
+.vscode/
+.idea/
+
+# Reqnroll generates these from the .feature files at build time
+*.feature.cs
