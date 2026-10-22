@@ -129,20 +129,6 @@ src/SnipeIt.Tests/
 
 ---
 
-## Engineering notes: problems found and solved
-
-These are the non-obvious issues the demo site raised, and how each was solved at the root rather than worked around with sleeps or retries.
-
-| Problem | Root cause | Solution |
-|---|---|---|
-| Model, status and user dropdowns can't be filled like normal `<select>` elements | Snipe-IT uses Select2, which hides the native select and loads options by AJAX, showing a text-less "loading" placeholder | A reusable `Select2Dropdown` component drives the widget like a user and filters out the loading placeholder and "No results" rows by class |
-| The "asset created" message sometimes never appeared, although the asset was saved | The header's Livewire alert menu loads in the background after page load. When the form was submitted quickly, that request reached the server mid-redirect and used up Laravel's one-time flash message | Diagnosed from the Playwright trace's network log; the create page now waits for network idle before the form is filled |
-| The purchase date was saved as today instead of the date entered | Snipe-IT's bootstrap-datetimepicker (with `useCurrent`) replaces typed text with today's date | The date is set through the picker's own API, as choosing it from the calendar would, and the step confirms the input holds the intended value before saving |
-| Purchase cost displays as `899.50` on some days and `899,50` on others | The demo's number format is a site setting that changes between resets | The cost check compares digits and accepts any separator |
-| Asset list rows were sometimes matched twice | Bootstrap Table clones rows for its fixed columns | Row lookup takes the first match by asset tag instead of requiring exactly one element |
-
----
-
 ## Configuration
 
 Settings are in [`src/SnipeIt.Tests/appsettings.json`](src/SnipeIt.Tests/appsettings.json). Any of them can be overridden with an environment variable using a double underscore:
@@ -187,12 +173,3 @@ Test data (model, status, purchase details) lives in the feature files, next to 
 
 ---
 
-## What I would do next
-
-- **Reuse the login session** with Playwright's `StorageState`, instead of logging in through the form in every scenario's Background.
-- **Set up and clean up through the REST API**, so UI scenarios only exercise the behaviour under test and leave no data behind.
-- **Run against a Dockerised Snipe-IT** with known seed data, so CI failures point to code changes rather than to the shared demo.
-- **Make the random user repeatable** with a logged seed or a fixed-user override, so a failing run can be replayed exactly.
-- **Living documentation and reporting**: an Allure report built from the Gherkin scenarios, published by CI alongside the traces.
-- **Broader coverage**: check-in, audit and bulk check-out flows, plus more validation rules, written as Scenario Outlines.
-- **Parallel runs** once each scenario owns its data end to end.
